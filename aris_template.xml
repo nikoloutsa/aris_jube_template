@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jube>
+  <include-path>
+ 	<path>platform/aris</path>
+  </include-path>
+
+  <benchmark name="jobsystem" outpath="bench_run">
+    <comment>ARIS JUBE TEMPLATE</comment>
+
+    <!-- Job configuration -->
+    <parameterset name="job_exec" init_with="platform.xml">
+    </parameterset>
+
+    <!-- Benchmark configuration -->
+    <parameterset name="param_set" init_with="platform.xml">
+      <parameter name="nodes" type="int">1,4,8,32,64</parameter>
+      <parameter name="ppn" type="int">2</parameter>      
+      <parameter name="walltime">00:01:00</parameter>
+      <parameter name="exec">echo $nodes</parameter>
+    </parameterset>
+    
+    <!-- Operation -->
+    <step name="submit">
+      <use>job_exec</use>
+      <use>param_set</use>
+      <use from="platform.xml">jobfiles,job_sub</use>
+      <do done_file="$job_ready">$job_cmd $job_file</do> 
+    </step>    
+  </benchmark>
+</jube>

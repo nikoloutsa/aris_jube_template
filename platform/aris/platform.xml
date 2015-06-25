@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jube>
+    <!-- Default ARIS Sets -->
+    <parameterset name="compileset">
+        <!-- Compiler information -->
+        <parameter name="make">make</parameter>
+        <parameter name="cc">gcc</parameter>
+        <parameter name="cflags"></parameter>
+        <parameter name="mpi_cc">mpicc</parameter>
+        <parameter name="mpi_cxx">mpicxx</parameter>
+        <parameter name="mpi_f90">mpif90</parameter>
+        <parameter name="mpi_f77">mpif77</parameter>
+    </parameterset>
+
+    <parameterset name="libs">
+        <!-- Library access information -->
+        <parameter name="load_module">module load</parameter>
+    </parameterset>
+
+    <substituteset name="compile_sub">
+        <!-- Default substitution -->
+        <sub source="#CC#" dest="$cc" />
+        <sub source="#MPI_CC#" dest="$mpi_cc" />
+        <sub source="#CFLAGS#" dest="$cflags" />
+    </substituteset>
+
+    <parameterset name="job_exec">
+        <!-- Jobscript handling -->
+        <parameter name="job_name"></parameter>
+        <parameter name="job_cmd">sbatch</parameter>
+        <parameter name="job_file">job.run</parameter>
+        <parameter name="job_srun">mpirun</parameter>
+        <parameter name="job_srun_args">-np $tasks</parameter>
+        <parameter name="job_ready">ready</parameter>
+    </parameterset>
+
+    <parameterset name="param_set">
+        <!-- Default jobscript parameter -->
+        <parameter name="nodes" type="int">1</parameter>
+        <parameter name="ppn" type="int">20</parameter>
+        <parameter name="threads" type="int">$ppn</parameter>
+        <parameter name="tasks" mode="python" type="int">
+            $nodes * $ppn
+        <!--
+            $nodes * $ppn // threads
+         -->
+        </parameter>
+        <parameter name="OMP_NUM_THREADS" type="int" export="true">
+            $threads
+        </parameter>
+        <parameter name="exec"></parameter>
+        <parameter name="exec_args"></parameter>
+        <parameter name="mail"></parameter>
+        <parameter name="env">$jube_wp_envstr</parameter>
+        <parameter name="notification"></parameter>
+        <parameter name="out_file">job.out</parameter>
+        <parameter name="err_file">job.err</parameter>
+        <parameter name="walltime">00:30:00</parameter>
+        <parameter name="modules"></parameter>
+    </parameterset>
+
+    <substituteset name="job_sub">
+        <!-- Default jobscript substitution -->
+        <iofile in="${job_file}.in" out="$job_file" />
+        <sub source="#ENV#" dest="$env" />
+        <sub source="#EMAIL#" dest="$mail" />
+        <sub source="#EMAIL_MODE#" dest="$notification" />
+        <sub source="#JOB_NAME#" dest="$jube_benchmark_name" />
+        <sub source="#NODES#" dest="$nodes" />
+        <sub source="#PPN#" dest="$ppn" />
+        <sub source="#THREADS#" dest="$threads" />
+        <sub source="#WALLTIME#" dest="$walltime" />
+        <sub source="#JOB_SRUN#" dest="$job_srun" />
+        <sub source="#JOB_SRUN_ARGS#" dest="$job_srun_args" />
+        <sub source="#OUT_FILE#" dest="$out_file" />
+        <sub source="#ERR_FILE#" dest="$err_file" />
+        <sub source="#EXEC#" dest="$exec" />
+        <sub source="#EXEC_ARGS#" dest="$exec_args" />
+        <sub source="#READY#" dest="touch $job_ready" />
+    </substituteset>
+
+    <fileset name="jobfiles">
+        <!-- Default jobscript access -->
+        <copy>${job_file}.in</copy>
+    </fileset>
+</jube>

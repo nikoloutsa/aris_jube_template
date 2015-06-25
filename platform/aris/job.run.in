@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --job-name=#JOB_NAME#
+#SBATCH --nodes=#NODES#
+#SBATCH --ntasks-per-node=#PPN#
+#SBATCH --time=#WALLTIME#
+#SBATCH --error=#ERR_FILE#
+#SBATCH --output=#OUT_FILE#
+
+#ENV#
+
+#JOB_SRUN# #JOB_SRUN_ARGS# #EXEC# #EXEC_ARGS#
+
+#READY#
